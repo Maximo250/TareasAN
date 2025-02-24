@@ -1,0 +1,2594 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Tarea 1. Soluciones de ecuaciones\"\n",
+        "author: \"Máximo Quiroz Sánchez\"\n",
+        "format: html\n",
+        "editor: visual\n",
+        "lang: es\n",
+        "---"
+      ],
+      "id": "787f5465"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import matplotlib.pyplot as plt\n",
+        "import numpy as np\n",
+        "from scipy import optimize"
+      ],
+      "id": "ffcca300",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Para las funciones de los ejercicios 1-6 realiza lo siguiente:\n",
+        "\n",
+        "a)  Gráfica de la función en el intervalo en caso que se indique.\n",
+        "\n",
+        "b)  Aproximación de la raíz o raíces por medio de los métodos de bisección, Newton-Raphson y la secante.\n",
+        "\n",
+        "c)  Compara los resultados.\n",
+        "\n",
+        "::: {#exr-tarea1_1}\n",
+        "Un polinomio cuadrático de la forma $f(x)=ax^2+bx+c$ con dos raíces reales distintas.\n",
+        "\n",
+        "Consideremos $f(x)= x^2-3x+2$\n",
+        "\n",
+        "**a) Gráfica:**\n"
+      ],
+      "id": "26f8142d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "f = lambda x: x**2 -3*x +2\n",
+        "\n",
+        "x = np.linspace(-1, 4, 400)\n",
+        "y= f(x)\n",
+        "\n",
+        "\n",
+        "plt.figure(figsize=(8, 5)) \n",
+        "plt.plot(x,y, color =\"Blue\") \n",
+        "plt.axhline(0, color = \"Red\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje y\n",
+        "\n",
+        "\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "bfe766c3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**b) Aproximaciones de las raíces:**\n",
+        "\n",
+        "**Primera raíz**\n",
+        "\n",
+        "Método bisección.\n"
+      ],
+      "id": "9a569dd7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f, 0.5, 1.5, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"-------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "4e0e5f7f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson. Primera derivada $f'(x)= 2x-3$\n"
+      ],
+      "id": "97cf20ef"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f_der = lambda x: 2*x-3\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f, 0.5, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"--------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "15458742",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "9b5c73ea"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f, x0 = 0, x1 = 0.5, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"----------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "d6dc0f64",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**c) Comparación de resultados:**\n",
+        "\n",
+        "**Primera raiz en cada método**\n"
+      ],
+      "id": "55947d3a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton,10)"
+      ],
+      "id": "8e385889",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton,10)"
+      ],
+      "id": "ec3ca0d2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Segunda\n",
+        "\n",
+        "Método bisección.\n"
+      ],
+      "id": "5aed5a98"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f, 1.0, 2.0, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"-------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "fc7ac439",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson. Primera dervidad $f'(x) = 2x-3$\n"
+      ],
+      "id": "74394d4e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f_der = lambda x: 2*x-4\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f, 2.5, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"--------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "40d1772a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "9d5004e3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f, x0=0, x1= 2.5, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_secante)\n",
+        "print(\"-------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "44df1342",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**c) Comparación de resultados:**\n",
+        "\n",
+        "**Segunda raíz en cada método**\n"
+      ],
+      "id": "672f590d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "ee8df119",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante, 10) == round(root_newton, 10)"
+      ],
+      "id": "2f77ae12",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "\n",
+        "::: {#exr-tarea1_2}\n",
+        "Un polinomio cúbico de la forma $f(x)=ax^3+bx^2+cx+d$ con tres raíces reales distintas.\n",
+        "\n",
+        "Nota: Cada alumna/o debe plantear un polinomio diferente.\n",
+        "\n",
+        "Consideremos $f(x)=2x^3-5x^2+x+3$\n",
+        "\n",
+        "Gráfica del polinomio:\n"
+      ],
+      "id": "05b30c2f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "f = lambda x: 2*x ** 3 - (5) * x ** 2 + x +3\n",
+        "\n",
+        "x = np.linspace(-1,4, 400)\n",
+        "y = f(x)\n",
+        "\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,5)) # Tamaño en pulgadas\n",
+        "plt.plot(x,y, color =\"Red\") \n",
+        "plt.axhline(0, color = \"Blue\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"Orange\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "07d1275c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Primera raiz\n",
+        "\n",
+        "Método bisección.\n"
+      ],
+      "id": "48032f3d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f, 0, -1, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "5d13adf5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson. Hay que brindar la primera derivada $f'(x)= 6x^2-10x+1$.\n"
+      ],
+      "id": "0f49ae25"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "# Se brinda la derivada de la función\n",
+        "f_der = lambda x: 6* x**2 - 10*x +1\n",
+        "# Se aplica el método de Newton-Raphson\n",
+        "root_newton, info_newton = optimize.newton(f, -1, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "f834fe4a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "bb4c33d2"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "# Se aplica el método de la secante\n",
+        "root_secante, info_secante = optimize.newton(f, x0 = -1, x1= 0, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "dd12fbed",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Añadir comentarios acerca del número de iteraciones en cada método. Y comparar las raíces.\n"
+      ],
+      "id": "3f1957d0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "a7ba014d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "8ca9ec98",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Aproximaciones para la segunda raíz**\n",
+        "\n",
+        "Método bisección.\n"
+      ],
+      "id": "7ee87c30"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f, -1, 1, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "9e72eb53",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson. Hay que brindar la primera derivada $f'(x)= 6x^2-10x+1$.\n"
+      ],
+      "id": "d1bcd2bf"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "# Se brinda la derivada de la función\n",
+        "f_der = lambda x: 6* x**2 - 10*x +1\n",
+        "# Se aplica el método de Newton-Raphson\n",
+        "root_newton, info_newton = optimize.newton(f, 1.25, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "5580280a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "07f9b83d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "# Se aplica el método de la secante\n",
+        "root_secante, info_secante = optimize.newton(f, x0 = 0.5, x1= 1.5, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "a847b784",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Añadir comentarios acerca del número de iteraciones en cada método. Y comparar las raíces.\n"
+      ],
+      "id": "c8684ab6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "0ebf713a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "4997f692",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "\n",
+        ":::::::::: {#exr-tarea1_3}\n",
+        "$f(x)= x^2 -2xe^{-x}+e^{-2x}$, para $0\\leq x \\leq 1$\n",
+        "\n",
+        "**a) Gráfica:**\n"
+      ],
+      "id": "9a228567"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "fig-aling": "center"
+      },
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f = lambda x: x**2 - 2 * x * np.exp(-x) + np.exp(-2*x)\n",
+        "x = np.linspace (-0.5, 3, 200)\n",
+        "y = f(x)\n",
+        "\n",
+        "\n",
+        "plt.figure(figsize=(8, 5))\n",
+        "plt.plot(x,y, color=\"Orange\")\n",
+        "plt.axhline(0, color = \"Blue\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"Green\", linewidth = 0.8, linestyle = \"--\") #Eje y\n",
+        "\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "f3354910",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**b) Aproximaciones para las raíces**\n",
+        "\n",
+        "**Única raíz**\n",
+        "\n",
+        "Método bisección\n",
+        "\n",
+        "no aplicable\n",
+        "\n",
+        "Método Newton-Raphson Primera derivada $f'(x)= 2x-2(e^{-x}-e^{-x}x)-2e^{-2x}$\n"
+      ],
+      "id": "9e495b64"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: True \n",
+        "\n",
+        "f_der = lambda x: 2*x -2*(np.exp(-x) - np.exp(-x)*x) -2*np.exp(-2*x)\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f, 0.3, f_der, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "6d8cb641",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "141fb6b0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true \n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f, x0 = 0, x1= 1, full_output=True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "ca91aab3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparamos\n"
+      ],
+      "id": "02bfb5b5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "64658916",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "25b94f77",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "::: {#exr-tarea1_4}\n",
+        "$g(x)= e^x-a$ donde $a=1, 3, 5$.\n",
+        "\n",
+        "Gráfica de la función\n"
+      ],
+      "id": "905b328c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "g1 = lambda x: np.exp(x)-1 \n",
+        "g3 = lambda x: np.exp(x)-3\n",
+        "g5 = lambda x: np.exp(x)-5\n",
+        "\n",
+        "x = np.linspace(-0.5, 2, 200)\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,5)) # Tamaño en pulgadas\n",
+        "plt.plot(x, g1(x), label = \"a=1\") \n",
+        "plt.plot(x, g3(x), label = \"a=3\")\n",
+        "plt.plot(x, g5(x), label = \"a=5\")\n",
+        "plt.axhline(0, color = \"Orange\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "plt.legend()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "bfa38a3b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Aproximaciones para la raíz cuando a=1**\n",
+        "\n",
+        "Método bisección.\n"
+      ],
+      "id": "3779dba3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(g1, -0.25, 0.5, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "5a089155",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson. Hay que brindar la primera derivada $g'(x)=e^x$.\n"
+      ],
+      "id": "4f2a7bac"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "# Se brinda la derivada de la función\n",
+        "g_der = lambda x: np.exp(x)\n",
+        "# Se aplica el método de Newton-Raphson\n",
+        "root_newton, info_newton = optimize.newton(g1, 1, g_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "1831e261",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "bf8c90a6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "# Se aplica el método de la secante\n",
+        "root_secante, info_secante = optimize.newton(g1, x0 = -0.5, x1= 1.5, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "62a829e4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Añadir comentarios acerca del número de iteraciones en cada método. Y comparar las raíces.\n"
+      ],
+      "id": "641b3acd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "e2adf44f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "4e4acdd1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Aproximaciones para la raíz cuando a=3**\n",
+        "\n",
+        "Método bisección.\n"
+      ],
+      "id": "fb647247"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(g3, 1, 1.5, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "512a7853",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson. Hay que brindar la primera derivada $g'(x)=e^x$.\n"
+      ],
+      "id": "47a77ae8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "# Se brinda la derivada de la función\n",
+        "g_der = lambda x: np.exp(x)\n",
+        "# Se aplica el método de Newton-Raphson\n",
+        "root_newton, info_newton = optimize.newton(g3, 1, g_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "6888538c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "cd719a86"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "# Se aplica el método de la secante\n",
+        "root_secante, info_secante = optimize.newton(g3, x0 = -0.5, x1= 1.5, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "7cb920af",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Añadir comentarios acerca del número de iteraciones en cada método. Y comparar las raíces.\n"
+      ],
+      "id": "bda9ebb1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "fd0a271c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "cae409f9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "\n",
+        ":::::::: {#exr-tarea1_5}\n",
+        "$g(x)= e^x-log(x+1) -b$ donde $b=2, 3, 5$.\n",
+        "\n",
+        "**a) Gráfica:**\n"
+      ],
+      "id": "0ac56276"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "g2 = lambda x: np.exp(x) - np.log10(x+1) -2\n",
+        "g3 = lambda x: np.exp(x) - np.log10(x+1) -3\n",
+        "g5 = lambda x: np.exp(x) - np.log10(x+1) -5\n",
+        "\n",
+        "x = np.linspace(-1, 3, 400)\n",
+        "\n",
+        "\n",
+        "plt.figure(figsize=(8,5)) \n",
+        "plt.plot(x, g2(x), label = \"b=2\") \n",
+        "plt.plot(x, g3(x), label = \"b=3\")\n",
+        "plt.plot(x, g5(x), label = \"b=5\")\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje y\n",
+        "\n",
+        "\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "\n",
+        "plt.legend()\n",
+        "plt.show()"
+      ],
+      "id": "55bf6ec2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Aproximacion de la primera raiz\n",
+        "\n",
+        "Método de bisección\n"
+      ],
+      "id": "36244463"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| \n",
+        "root_biseccion, info_biseccion = optimize.bisect(g2, -0.99, -0.4, xtol=2e-12, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "4c95d235",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $g'(x)= e^x - \\frac {1}{x+1}$\n"
+      ],
+      "id": "f5eb8fc8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true \n",
+        "\n",
+        "g_der = lambda x: np.exp(x) - (1/(x+1))\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(g2, -0.99, g_der, tol=2e-12, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "5f0f3e15",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "fbe04408"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(g2, x0 = -0.99, x1= -0.93, tol=2e-12, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "7d73cc8b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparación\n"
+      ],
+      "id": "56699c5e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton,10)"
+      ],
+      "id": "5ed4db99",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton,10)"
+      ],
+      "id": "fdf4d6b8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Segunda raiz\n",
+        "\n",
+        "Método bisección\n"
+      ],
+      "id": "dbf68796"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| \n",
+        "root_biseccion, info_biseccion = optimize.bisect(g2, 0.5, 1, xtol=1e-12, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "b50a485b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $g'(x)= e^x - \\frac {1}{x+1}$\n"
+      ],
+      "id": "d647a51c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true \n",
+        "\n",
+        "g_der = lambda x: np.exp(x) - (1/(x+1))\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(g2, 0.6, g_der, tol=1e-12, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "3105b4c9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "ab0d98d6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(g2, x0 = 0.6, x1= 1, tol=2e-12, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "a73a2492",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparacion d e resultados\n"
+      ],
+      "id": "7aeed4eb"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton,10)"
+      ],
+      "id": "03556419",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton,10)"
+      ],
+      "id": "b767f65a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "3ra raiz\n",
+        "\n",
+        "Método de bisección\n"
+      ],
+      "id": "70f96c09"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(g3, 1, 1.5, xtol=2e-12, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "1a7db1f6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $g'(x)= e^x - \\frac {1}{x+1}$\n"
+      ],
+      "id": "eb0c201c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true \n",
+        "\n",
+        "g_der = lambda x: np.exp(x) - (1/(x+1))\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(g3, 1, g_der, tol=1e-12, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "978d726b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "d6837846"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(g3, x0 = 1, x1= 1.5, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "914f82e7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparación\n"
+      ],
+      "id": "bbb9b954"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton,10)"
+      ],
+      "id": "16cb74e2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton,10)"
+      ],
+      "id": "d040682f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Raiz en 5\n"
+      ],
+      "id": "73a0c165"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(g5, 1.5, 2, xtol = 2e-12, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "7ddd6444",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $g'(x)= e^x - \\frac {1}{x+1}$\n"
+      ],
+      "id": "a3d70b49"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true \n",
+        "\n",
+        "g_der = lambda x: np.exp(x) - (1/(x+1))\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(g5, 1.5, g_der, tol=1e-12, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "0cc968b1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "83780d59"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(g5, x0 = 1.5, x1= 2, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "b86c56bc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparamos\n"
+      ],
+      "id": "1ca6634c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton,10)"
+      ],
+      "id": "567f7507",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton,10)"
+      ],
+      "id": "cd064baf",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "::::::: {#exr-tarea1_6}\n",
+        "$f(x)= \\sqrt{x}-sen(x) -c$ donde $c=1,\\pi$.\n"
+      ],
+      "id": "379cc72d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "f1 = lambda x: np.sqrt(x) - np.sin(x)-1 \n",
+        "f2 = lambda x: np.sqrt(x) - np.sin(x)-np.pi\n",
+        "\n",
+        "x = np.linspace (-1, 20, 500)\n",
+        "\n",
+        "plt.figure(figsize=(8,5)) \n",
+        "plt.plot(x, f1(x), label = \"c=1\") \n",
+        "plt.plot(x, f2(x), label = \"c=π\")\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje y\n",
+        "\n",
+        "\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "plt.legend()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "1d23a888",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Aproximamos raices\n",
+        "\n",
+        "Método bisección\n"
+      ],
+      "id": "4745e093"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f1, 0, 3, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "de66fc4e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $f'(x)= \\frac{1}{2√(x)} -cos(x)$\n"
+      ],
+      "id": "1692c11c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f_der = lambda x: (1/(2*np.sqrt(x))) -np.cos(x)\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f1, 3, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "0a26148a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "fdd54fbe"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f1, x0 = 0, x1= 3, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "a8c237fe",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "\\*Comparamos cuando es 1\n"
+      ],
+      "id": "de1c43e3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "aca08d2d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "8ef08b73",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Cuando es pi\n",
+        "\n",
+        "Método bisección\n"
+      ],
+      "id": "79112174"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f2, 3, 5, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "803f4f2e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $f'(x)= \\frac{1}{2√(x)} -cos(x)$\n"
+      ],
+      "id": "3edeb347"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f_der = lambda x: (1/(2*np.sqrt(x))) -np.cos(x)\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f2, 4, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "2e66ccf6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "05185b6b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f2, x0 = 4, x1= 5, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "558f205c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparamos\n"
+      ],
+      "id": "48c95f21"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "cb9dd4ac",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "f58483be",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Cuando es pi\\*\n",
+        "\n",
+        "Método bisección\n"
+      ],
+      "id": "ac963f5d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f2, 5, 7, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "b1e1014d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada funcion $f'(x)= \\frac{1}{2√(x)} -cos(x)$\n"
+      ],
+      "id": "7da173e4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f_der = lambda x: (1/(2*np.sqrt(x))) -np.cos(x)\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f2, 5, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "88504d55",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "efbea464"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f2, x0 = 5, x1= 6, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "f796a313",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparamos\n"
+      ],
+      "id": "7b0209d6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "412f0ed4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "8cf82f43",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Tercera raiz en pi\n",
+        "\n",
+        "Método bisección\n"
+      ],
+      "id": "502681cd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f2, 9, 10, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "0734507c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $f'(x)= \\frac{1}{2√(x)} -cos(x)$\n"
+      ],
+      "id": "633d6226"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f_der = lambda x: (1/(2*np.sqrt(x))) -np.cos(x)\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f2, 9, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "79afcfd1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "00c68a79"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f2, x0 = 9, x1= 10, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "f4bdf881",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparamos\n"
+      ],
+      "id": "db65e82c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "adf5f619",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "f3692b9e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Cuarta cuando es pi\n",
+        "\n",
+        "Método bisección\n"
+      ],
+      "id": "cf0178e7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f2, 12, 14, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "af82fb75",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $f'(x)= \\frac{1}{2√(x)} -cos(x)$\n"
+      ],
+      "id": "e3113ac3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f_der = lambda x: (1/(2*np.sqrt(x))) -np.cos(x)\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f2, 12, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "0cad03f9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "dce5aaca"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f2, x0 = 12, x1= 13.5, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "2c1cc004",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Comparamos\n"
+      ],
+      "id": "297d7249"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "8ab365c3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "60af0489",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Rauz eb quinta\n",
+        "\n",
+        "Método bisección\n"
+      ],
+      "id": "e1d0db5b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_biseccion, info_biseccion = optimize.bisect(f2, 14.5, 15.75, full_output = True)\n",
+        "\n",
+        "print(\"Información de la convergencia del método:\")\n",
+        "print(info_biseccion)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_biseccion}\")"
+      ],
+      "id": "d2320372",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método Newton-Raphson Primera derivada $f'(x)= \\frac{1}{2√(x)} -cos(x)$\n"
+      ],
+      "id": "b4b98744"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "f_der = lambda x: (1/(2*np.sqrt(x))) -np.cos(x)\n",
+        "\n",
+        "root_newton, info_newton = optimize.newton(f2, 14.5, f_der, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de Newton-Raphson:\")\n",
+        "print(info_newton)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_newton}\")"
+      ],
+      "id": "bcf7c07f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Método de la secante\n"
+      ],
+      "id": "c7811efd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "\n",
+        "root_secante, info_secante = optimize.newton(f2, x0 = 14.5, x1= 15.75, full_output = True)\n",
+        "\n",
+        "\n",
+        "print(\"Información de la convergencia del método de la secante:\")\n",
+        "print(info_secante)\n",
+        "print(\"------------------------------------\")\n",
+        "print(f\"La raíz de la función es: {root_secante}\")"
+      ],
+      "id": "8d476f5a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "comparamos resultados\n"
+      ],
+      "id": "f7f38d2f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_biseccion,10) == round(root_newton, 10)"
+      ],
+      "id": "6b98134d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "round(root_secante,10) == round(root_newton, 10)"
+      ],
+      "id": "2ef45f0f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "::: {#exr-tarea1_7}\n",
+        "El sistema de ecuaciones no lineales:\n",
+        "\n",
+        "\\begin{eqnarray}\n",
+        "y^2 - x^2 + 4x - 2 &=& 0\\\\\n",
+        "x^2 +3y^2 - 4 &=& 0\\\\\n",
+        "\\end{eqnarray}\n",
+        "\n",
+        "tiene dos soluciones. Realiza una gráfica de las curvas de nivel y aproxima las soluciones con la función `fsolve`.\n",
+        ":::\n",
+        "\n",
+        "Graficas curvas de nivel\n"
+      ],
+      "id": "e8a8750d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "f1 = lambda x: np.sqrt(x**2 -4*x+2) \n",
+        "f2 = lambda x: - f1(x)\n",
+        "g1 = lambda x: np.sqrt((-x**2+4)/3)\n",
+        "g2 = lambda x: -g1(x)\n",
+        "\n",
+        "x = np.linspace(-3, 3, 200)\n",
+        "\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,6)) # Tamaño en pulgadas\n",
+        "plt.plot(x, f1(x), label = \"f1\") \n",
+        "plt.plot(x, f2(x), label = \"f2\")\n",
+        "plt.plot(x, g1(x), label = \"g1\")\n",
+        "plt.plot(x, g2(x), label = \"g2\")\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.title(r\"Gráficas de las curvas de nivel\", fontsize= 14)\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "24b63c34",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Aproximamos la solución del sistema (los puntos de intersección de las curvas de nivel)\n"
+      ],
+      "id": "746b2251"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def sistema(variables): # variables debe ser una lista de dos elementos\n",
+        "  x, y = variables\n",
+        "  return [y ** 2 - x ** 2 + 4*x -2, x**2+3* y ** 2 -4]\n",
+        "\n",
+        "solucion_1 = optimize.fsolve(sistema, x0=[0.5,1])\n",
+        "solucion_2 = optimize.fsolve(sistema, x0=[0.5,-1])\n",
+        "print(f\"Las soluciones del sistema son: ({round(solucion_1[0], 4)}, {round(solucion_1[1], 4)}) y ({round(solucion_2[0], 4)}, {round(solucion_2[1], 4)})\")"
+      ],
+      "id": "6821642f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,5)) # Tamaño en pulgadas\n",
+        "plt.plot(x, f1(x), label = \"f1\") \n",
+        "plt.plot(x, f2(x), label = \"f2\")\n",
+        "plt.plot(x, g1(x), label = \"g1\")\n",
+        "plt.plot(x, g2(x), label = \"g2\")\n",
+        "plt.plot(solucion_1[0], solucion_1[1], marker = 'o', ms=8, color= \"Red\")\n",
+        "plt.plot(solucion_2[0], solucion_2[1], marker = 'o', ms=8, color= \"Red\")\n",
+        "\n",
+        "\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "plt.legend()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "cd8ef83c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "::: {#exr-tarea1_8}\n",
+        "Considera el siguiente sistema:\n",
+        "\n",
+        "\\begin{eqnarray}\n",
+        "sen(x) + y^2 - 1 &=& 0\\\\\n",
+        "x + cos(y) - 1 &=& 0\\\\\n",
+        "\\end{eqnarray}\n",
+        "\n",
+        "Realiza una gráfica de las curvas de nivel y aproxima la solución con la función `fsolve`.\n",
+        ":::\n"
+      ],
+      "id": "0b3891fd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "f1 = lambda x: np.sqrt(1-np.sin(x))\n",
+        "f2 = lambda x: - f1(x)\n",
+        "g1 = lambda x: np.arccos(1-x)\n",
+        "g2 = lambda x: -g1(x)\n",
+        "\n",
+        "x = np.linspace(0, 2, 500)\n",
+        "\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,6)) # Tamaño en pulgadas\n",
+        "plt.plot(x, f1(x), label = \"f1\") \n",
+        "plt.plot(x, f2(x), label = \"f2\")\n",
+        "plt.plot(x, g1(x), label = \"g1\")\n",
+        "plt.plot(x, g2(x), label = \"g2\")\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Graficar las funciones con colores personalizados\n",
+        "plt.plot(x, f1(x), color=\"blue\", label=\"f1\")  # Azul para f1\n",
+        "plt.plot(x, f2(x), color=\"red\", label=\"f2\")   # Rojo para f2\n",
+        "plt.plot(x, g1(x), color=\"green\", label=\"g1\") # Verde para g1\n",
+        "plt.plot(x, g2(x), color=\"purple\", label=\"g2\") # Morado para g2\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.title(r\"Gráficas de las curvas de nivel\", fontsize= 14)\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "ce28d054",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def sistema(variables): # variables debe ser una lista de dos elementos\n",
+        "  x, y = variables\n",
+        "  return [np.sin(x)+y**2 -1, x + np.cos(y) -1]\n",
+        "\n",
+        "solucion_1 = optimize.fsolve(sistema, x0=[0.5,1])\n",
+        "solucion_2 = optimize.fsolve(sistema, x0=[0.5,-1])\n",
+        "print(f\"Las soluciones del sistema son: ({round(solucion_1[0], 4)}, {round(solucion_1[1], 4)}) y ({round(solucion_2[0], 4)}, {round(solucion_2[1], 4)})\")"
+      ],
+      "id": "67bc4dd7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,5)) # Tamaño en pulgadas\n",
+        "plt.plot(x, f1(x), label = \"f1\") \n",
+        "plt.plot(x, f2(x), label = \"f2\")\n",
+        "plt.plot(x, g1(x), label = \"g1\")\n",
+        "plt.plot(x, g2(x), label = \"g2\")\n",
+        "plt.plot(solucion_1[0], solucion_1[1], marker = 'o', ms=8, color= \"Red\")\n",
+        "plt.plot(solucion_2[0], solucion_2[1], marker = 'o', ms=8, color= \"Red\")\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "plt.legend()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "f3486fef",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "::: {#exr-tarea1_9}\n",
+        "Para el siguiente sistema de ecuaciones no lineal:\n",
+        "\n",
+        "\\begin{eqnarray}\n",
+        "x^3 + y - 6 &=& 0\\\\\n",
+        "y^3 -x - 4 &=& 0\\\\\n",
+        "\\end{eqnarray}\n",
+        "\n",
+        "Realiza una gráfica de las curvas de nivel y aproxima la solución con la función `fsolve`.\n",
+        ":::\n"
+      ],
+      "id": "6f9ae703"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "f1 = lambda x: 6- x**3\n",
+        "g1 = lambda x: (x+4)**(1/3)\n",
+        "\n",
+        "\n",
+        "x = np.linspace(0, 2, 500)\n",
+        "\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,6)) # Tamaño en pulgadas\n",
+        "plt.plot(x, f1(x), label = \"f1\") \n",
+        "\n",
+        "plt.plot(x, g1(x), label = \"g1\")\n",
+        "\n",
+        " Graficar las funciones con colores personalizados\n",
+        "plt.plot(x, f1(x), color=\"#FF5733\", label=\"f1(x) = 6 - x³\")  # Naranja para f1\n",
+        "plt.plot(x, g1(x), color=\"#33FF57\", label=\"g1(x) = (x + 4)^(1/3)\")  # Verde claro para g1\n",
+        "\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.title(r\"Gráficas de las curvas de nivel\", fontsize= 14)\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "763e86d0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def sistema(variables): # variables debe ser una lista de dos elementos\n",
+        "  x, y = variables\n",
+        "  return [x**3 +y-6, y**3 -x -4]\n",
+        "\n",
+        "solucion_1 = optimize.fsolve(sistema, x0=[1.6,2])\n",
+        "\n",
+        "print(f\"Las solucion del sistema es: ({round(solucion_1[0], 4)}, {round(solucion_1[1], 4)}) \")"
+      ],
+      "id": "19b4f725",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,5)) # Tamaño en pulgadas\n",
+        "plt.plot(x, f1(x), label = \"f1\") \n",
+        "\n",
+        "plt.plot(x, g1(x), label = \"g1\")\n",
+        "\n",
+        "plt.plot(solucion_1[0], solucion_1[1], marker = 'o', ms=8, color= \"darkorange\")\n",
+        "\n",
+        " Graficar las funciones con colores personalizados\n",
+        "plt.plot(x, f1(x), color=\"#FF5733\", label=\"f1(x) = 6 - x³\")  # Naranja para f1\n",
+        "plt.plot(x, g1(x), color=\"#33FF57\", label=\"g1(x) = (x + 4)^(1/3)\")  # Verde claro para g1\n",
+        "\n",
+        "\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "plt.legend()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "eaf202fd",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "::: {#exr-tarea1_10}\n",
+        "Consideraremos un sistema de ecuaciones no lineal para describir un modelo de equilibrio económico.\n",
+        "\n",
+        "1.  Curva de demanda no lineal\n",
+        "\n",
+        "\\begin{equation}\n",
+        "q_d = 200 - 10 p^2\n",
+        "\\end{equation}\n",
+        "\n",
+        "2.  Curva de oferta no lineal\n",
+        "\n",
+        "\\begin{equation}\n",
+        "q_s = 5 p^3 + 15\n",
+        "\\end{equation}\n",
+        "\n",
+        "El equilibrio ocurre cuando\n",
+        "\n",
+        "\\begin{equation}\n",
+        "q_s = q_d\n",
+        "\\end{equation}\n",
+        "\n",
+        "O bien\n",
+        "\n",
+        "\\begin{eqnarray}\n",
+        "q + 10p^2 -200  &=& 0\\\\\n",
+        "q - 5p^3 - 15 &=& 0\\\\\n",
+        "\\end{eqnarray}\n",
+        "\n",
+        "Realiza una gráfica de las curvas y aproxima el punto de equilibrio con la función `fsolve`.\n"
+      ],
+      "id": "346fdcd5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "f1 = lambda x: 200 -10*x**2\n",
+        "g1 = lambda x: 5*x**3 +15\n",
+        "\n",
+        "\n",
+        "x = np.linspace(0, 4, 500)\n",
+        "\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,6)) # Tamaño en pulgadas\n",
+        "plt.plot(x, f1(x), label = \"f1\") \n",
+        "\n",
+        "plt.plot(x, g1(x), label = \"g1\")\n",
+        "# Graficar las funciones con colores personalizados\n",
+        "plt.plot(x, f1(x), color=\"#E74C3C\", label=\"f1(x) = 200 - 10x²\")  # Rojo oscuro para f1\n",
+        "plt.plot(x, g1(x), color=\"#3498DB\", label=\"g1(x) = 5x³ + 15\")   # Azul claro para g1\n",
+        "\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.title(r\"Gráficas de las curvas de nivel\", fontsize= 14)\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "9c482f9a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def sistema(variables): # variables debe ser una lista de dos elementos\n",
+        "  x, y = variables\n",
+        "  return [y + 10*x**2 -200, y-5*x**3 -15]\n",
+        "\n",
+        "solucion_1 = optimize.fsolve(sistema, x0=[1.6,2])\n",
+        "\n",
+        "print(f\"Las solucion del sistema es: ({round(solucion_1[0], 4)}, {round(solucion_1[1], 4)}) \")"
+      ],
+      "id": "d3ec59ec",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| code-fold: true\n",
+        "#| fig-align: \"center\"\n",
+        "\n",
+        "# Crear gráfica\n",
+        "plt.figure(figsize=(8,5)) # Tamaño en pulgadas\n",
+        "plt.plot(x, f1(x), label = \"f1\") \n",
+        "\n",
+        "plt.plot(x, g1(x), label = \"g1\")\n",
+        "\n",
+        "plt.plot(solucion_1[0], solucion_1[1], marker = 'o', ms=8, color= \"darkorange\")\n",
+        "\n",
+        "# Graficar las funciones con colores personalizados\n",
+        "plt.plot(x, f1(x), color=\"#E74C3C\", label=\"f1(x) = 200 - 10x²\")  # Rojo oscuro para f1\n",
+        "plt.plot(x, g1(x), color=\"#3498DB\", label=\"g1(x) = 5x³ + 15\")   # Azul claro para g1\n",
+        "\n",
+        "plt.axhline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "plt.axvline(0, color = \"black\", linewidth = 0.8, linestyle = \"--\") #Eje x\n",
+        "\n",
+        "# Personalizar gráfica\n",
+        "plt.xlabel(\"x\")\n",
+        "plt.ylabel(\"y\")\n",
+        "plt.grid()\n",
+        "plt.legend()\n",
+        "\n",
+        "plt.show()"
+      ],
+      "id": "c71377be",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        ":::::::\n",
+        "::::::::\n",
+        "::::::::::"
+      ],
+      "id": "59020f66"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\maxim\\AppData\\Local\\Programs\\Python\\Python313\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
