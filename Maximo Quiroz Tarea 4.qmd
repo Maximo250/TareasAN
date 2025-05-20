@@ -1,0 +1,316 @@
+---
+title: "Tarea 4"
+author: "Maximo Quiroz"
+format: html
+editor: visual
+---
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+import plotly.graph_objs as go
+import statsmodels.api as sm
+from statsmodels.tsa.stattools import adfuller, acf, pacf
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.ar_model import AutoReg
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from pandas.plotting import lag_plot
+import calendar
+
+```
+
+# Leer datos
+
+```{python}
+inegi_data = pd.read_excel("C:/Users/maxim/OneDrive/Documentos/Análisis Númerico/inegi_data.xlsx", parse_dates=["Periodo"])
+inegi_data = inegi_data[inegi_data["Periodo"].dt.year >= 2016]
+
+```
+
+# Serie temporal como pandas Series y DataFrame
+
+```{python}
+MXN_series = pd.Series(inegi_data["Cetes_28_Dias"].values, index=inegi_data["Periodo"])
+MXN_df = inegi_data.set_index("Periodo")
+
+```
+
+# Info básica de la serie
+
+```{python}
+print("Información de la serie temporal:")
+print(MXN_series.describe())
+print(MXN_series.head())
+
+```
+
+# Gráfica simple
+
+```{python}
+plt.figure(figsize=(12,5))
+plt.plot(MXN_series)
+plt.title("Cetes 28 Días (2016 en adelante)")
+plt.xlabel("Fecha")
+plt.ylabel("Cetes 28 Días")
+plt.grid()
+plt.tight_layout()
+plt.show()
+
+```
+
+Interpretación:
+
+Esta gráfica muestra la evolución mensual de la tasa de Cetes a 28 días desde 2016. Permite identificar tendencias generales, incrementos o decrementos sostenidos y posibles cambios estructurales en la serie a lo largo del tiempo. Por ejemplo, un aumento sostenido indicaría un endurecimiento en la política monetaria, mientras que una disminución reflejaría relajación.
+
+# Gráfica interactiva
+
+```{python}
+fig = px.line(MXN_df, x=MXN_df.index, y="Cetes_28_Dias", title="Cetes 28 Días (interactivo)")
+fig.show()
+```
+
+**Interpretación:**\
+La visualización interactiva facilita explorar el comportamiento de la serie en detalle, permitiendo acercar o alejar períodos específicos. Es útil para detectar eventos puntuales, anomalías o cambios bruscos en la tasa.
+
+# Comparación anual
+
+```{python}
+MXN_df["Año"] = MXN_df.index.year
+plt.figure(figsize=(12,5))
+sns.lineplot(data=MXN_df, x=MXN_df.index.month, y="Cetes_28_Dias", hue="Año", palette="Paired")
+plt.title("Comparación anual de Cetes 28 Días")
+plt.xlabel("Mes")
+plt.ylabel("Cetes 28 Días")
+plt.xticks(ticks=range(1,13), labels=[calendar.month_abbr[m] for m in range(1,13)])
+plt.tight_layout()
+plt.show()
+```
+
+**Interpretación:**\
+Al comparar la tasa de Cetes mes a mes para diferentes años, puedes identificar patrones estacionales o diferencias entre años. Si las líneas de diferentes años siguen un patrón similar, existe estacionalidad; si varían mucho, los cambios anuales son más determinantes.
+
+# Comparación mensual (ciclo)
+
+```{python}
+MXN_df["Mes"] = MXN_df.index.month
+plt.figure(figsize=(12,5))
+sns.lineplot(data=MXN_df, x="Año", y="Cetes_28_Dias", hue="Mes", palette="Paired")
+plt.title("Comparación mensual de Cetes 28 Días")
+plt.xlabel("Año")
+plt.ylabel("Cetes 28 Días")
+plt.tight_layout()
+plt.show()
+
+```
+
+Interpretación:
+
+Esta gráfica compara el comportamiento de la tasa a lo largo de los años, diferenciando por mes. Permite identificar si ciertos meses presentan sistemáticamente tasas más altas o bajas, evidenciando patrones estacionales o efectos mensuales recurrentes.
+
+# Boxplot trimestral
+
+```{python}
+MXN_df["Trimestre"] = MXN_df.index.to_period("Q")
+plt.figure(figsize=(12,5))
+sns.boxplot(x="Trimestre", y="Cetes_28_Dias", data=MXN_df)
+plt.title("Boxplot Trimestral de Cetes 28 Días")
+plt.xlabel("Trimestre")
+plt.ylabel("Cetes 28 Días")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+```
+
+**Interpretación:**\
+El boxplot por trimestre muestra la distribución de las tasas para cada trimestre, ayudando a visualizar la variabilidad, la mediana y los valores atípicos. Es útil para ver en qué trimestres hay más volatilidad o si existen trimestres con tasas consistentemente altas o bajas.
+
+# Heatmap (año x mes)
+
+```{python}
+pivot_table = MXN_df.pivot_table(values="Cetes_28_Dias", index="Año", columns="Mes")
+plt.figure(figsize=(10,6))
+sns.heatmap(pivot_table, cmap="Spectral", annot=True, fmt=".2f")
+plt.title("Heatmap de Cetes 28 Días")
+plt.tight_layout()
+plt.show()
+
+```
+
+Interpretación:
+
+El heatmap permite observar visualmente la intensidad de las tasas a lo largo de los años y meses. Los colores permiten identificar rápidamente patrones estacionales, años con tasas altas/bajas y meses atípicos
+
+# Surface plot (3D)
+
+```{python}
+from mpl_toolkits.mplot3d import Axes3D
+X, Y = np.meshgrid(pivot_table.columns, pivot_table.index)
+Z = pivot_table.values
+fig = plt.figure(figsize=(10,7))
+ax = fig.add_subplot(111, projection='3d')
+surf = ax.plot_surface(X, Y, Z, cmap='Spectral')
+ax.set_xlabel('Mes')
+ax.set_ylabel('Año')
+ax.set_zlabel('Cetes 28 Días')
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.title("Surface Plot de Cetes 28 Días")
+plt.show()
+```
+
+Interpretación:
+
+La gráfica 3D proporciona una vista combinada de las tasas respecto a año y mes. Es útil para detectar tendencias, ciclos y variaciones a lo largo de ambos ejes (año y mes) de manera conjunta.
+
+# Estadísticas
+
+```{python}
+media = MXN_series.mean()
+varianza = MXN_series.var()
+print(f"Media muestral: {media:.4f}")
+print(f"Varianza muestral: {varianza:.4f}")
+
+```
+
+# Autocorrelación muestral
+
+```{python}
+plt.figure(figsize=(10,4))
+plot_acf(MXN_series, lags=24)
+plt.title("Autocorrelación (ACF)")
+plt.tight_layout()
+plt.show()
+```
+
+Interpretación:
+
+La gráfica de autocorrelación muestra cómo los valores de la serie están correlacionados consigo mismos a diferentes rezagos (lags). Picos significativos pueden indicar estacionalidad, persistencia o memoria en la serie.
+
+# Lags
+
+```{python}
+plt.figure(figsize=(12,8))
+for i in range(1,5):
+    plt.subplot(2,2,i)
+    lag_plot(MXN_series, lag=i)
+    plt.title(f"Lag {i}")
+plt.tight_layout()
+plt.show()
+```
+
+Interpretación:
+
+Estas gráficas muestran la relación entre los valores actuales y pasados de la serie para distintos desfases. Si los puntos forman una línea, hay alta autocorrelación; si están dispersos, la relación es débil.
+
+# Prueba de Dickey-Fuller
+
+```{python}
+result = adfuller(MXN_series)
+print("ADF Statistic:", result[0])
+print("p-value:", result[1])
+if result[1] > 0.05:
+    print("La serie NO es estacionaria (no se rechaza H0)")
+else:
+    print("La serie es estacionaria (se rechaza H0)")
+```
+
+# Diferenciación para estacionariedad
+
+```{python}
+MXN_diff = MXN_series.diff().dropna()
+plt.figure(figsize=(12,5))
+plt.plot(MXN_diff)
+plt.title("Serie Diferenciada de Cetes 28 Días")
+plt.tight_layout()
+plt.show()
+```
+
+# Prueba Dickey-Fuller a la serie diferenciada
+
+```{python}
+result_diff = adfuller(MXN_diff)
+print("ADF Statistic (diferenciada):", result_diff[0])
+print("p-value:", result_diff[1])
+if result_diff[1] > 0.05:
+    print("La serie diferenciada NO es estacionaria")
+else:
+    print("La serie diferenciada es estacionaria")
+
+```
+
+Interpretación:
+
+La gráfica muestra la serie tras aplicar una diferenciación, que elimina tendencias y ayuda a estabilizar la media de la serie. Si la serie diferenciada parece más estacionaria (constante en media y varianza), es adecuada para modelado ARIMA.
+
+# Descomposición de la serie diferenciada
+
+```{python}
+decompose_type = 'additive'  # O 'multiplicative', según tu necesidad
+decomposition_diff = seasonal_decompose(MXN_diff, model=decompose_type, period=12)
+decomposition_diff.plot()
+plt.suptitle("Descomposición de la Serie Diferenciada", fontsize=16)
+plt.tight_layout()
+plt.show()
+
+```
+
+\
+Interpretación:
+
+La descomposición divide la serie en tendencia, estacionalidad y residuo. Permite identificar la contribución de cada componente y facilita el análisis, por ejemplo, para saber si la estacionalidad es fuerte o si hay una tendencia marcada.
+
+# AutoRegresión
+
+```{python}
+model_ar = AutoReg(MXN_series, lags=5, old_names=False).fit()
+print(model_ar.summary())
+
+```
+
+Interpretación:
+
+Esta gráfica muestra el ajuste del modelo autorregresivo sobre la serie temporal. Si el ajuste sigue bien la serie original, el modelo AR es adecuado para capturar la dinámica de la serie.
+
+# Gráfica de ajuste AR
+
+```{python}
+MXN_fitted = model_ar.fittedvalues
+plt.figure(figsize=(12,5))
+plt.plot(MXN_series, label="Original")
+plt.plot(MXN_fitted, label="Ajuste AR", linestyle="--")
+plt.legend()
+plt.title("Ajuste AR a la Serie Temporal")
+plt.tight_layout()
+plt.show()
+```
+
+Interpretación:
+
+Los residuos muestran la diferencia entre los valores observados y los ajustados por el modelo AR. Si los residuos parecen ruido blanco (sin patrón), el modelo es bueno. Si hay estructura, el modelo podría mejorarse.
+
+# Forecast (pronóstico)
+
+```{python}
+from statsmodels.tsa.ar_model import AutoRegResults
+h = 12  # Número de periodos a predecir
+pred = model_ar.get_prediction(start=len(MXN_series), end=len(MXN_series)+h-1, dynamic=False)
+forecast = pred.predicted_mean
+forecast_index = pd.date_range(MXN_series.index[-1]+pd.DateOffset(months=1), periods=h, freq="M")
+
+plt.figure(figsize=(12,5))
+plt.plot(MXN_series, label="Serie Observada")
+plt.plot(forecast_index, forecast, label="Pronóstico", marker="o")
+plt.title("Pronóstico AR (12 meses)")
+plt.xlabel("Fecha")
+plt.ylabel("Cetes 28 Días")
+plt.legend()
+plt.tight_layout()
+plt.show()
+```
+
+Interpretación:
+
+Esta gráfica muestra el pronóstico de la tasa de Cetes para los siguientes 12 meses, junto con la serie histórica. Permite visualizar las expectativas del modelo y comparar el pronóstico con la evolución previa de la serie.
